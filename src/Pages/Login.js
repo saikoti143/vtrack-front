@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import '../index.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export const Login = ({setLoggedIn}) => {
+export const Login = ({ setLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
@@ -15,7 +15,7 @@ export const Login = ({setLoggedIn}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
-      
+
     if (form.checkValidity() === false) {
       event.stopPropagation();
     }
@@ -25,16 +25,20 @@ export const Login = ({setLoggedIn}) => {
     // Validate email
     if (!email.trim()) {
       setEmailError('Email is required');
-    } else if (!/\S+@\S+\.vensaiinc\.com/.test(email)) {
+    } else if (12>email.length) {
+      if(/@vensaiinc.com/.test(email)){
       setEmailError('Invalid email address');
+      }
+    } else if (/.^VEN/.test(email.split('@')[0])) {
+      setEmailError('Invalid user ID');
     } else {
       setEmailError('');
     }
-
+    
     // Validate password
     if (!password) {
       setPasswordError('Password is required');
-    } else if (password.length < 6) {
+    } else if (password.length < 5) {
       setPasswordError('Password must be at least 6 characters long');
     } else {
       setPasswordError('');
@@ -48,17 +52,17 @@ export const Login = ({setLoggedIn}) => {
           password,
         });
 
-      const  jwtToken = response.data;
-      window.jwtToken = jwtToken;
-      if (jwtToken) {
-        setLoggedIn(true);
-        sessionStorage.setItem('jwtToken',jwtToken);
-        
-      }
+        const jwtToken = response.data;
+        window.jwtToken = jwtToken;
+        if (jwtToken) {
+          setLoggedIn(true);
+          sessionStorage.setItem('jwtToken', jwtToken);
 
-      console.log(jwtToken);
-       navigate("/home");
-      // console.log(window.jwtToken);
+        }
+
+        console.log(jwtToken);
+        navigate("/home");
+        // console.log(window.jwtToken);
       } catch (error) {
         console.log(error.message);
         // Handle the error (e.g., display error message)
@@ -75,16 +79,18 @@ export const Login = ({setLoggedIn}) => {
         <div className="login-container">
           <div className="login-form">
             <h2 className="text-center">Employee Login</h2>
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <Form  validated={validated} onSubmit={handleSubmit}>
               <Form.Group controlId="email">
                 <Form.Control
-                  type="email"
-                  placeholder="Email"
+                  type="text"
+                  placeholder="Email or UserID"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  minLength={7}
+                  minLength={6}
                   isInvalid={!!emailError}
+                  className={emailError ? 'is-invalid' : ''}
+                  
                 />
                 <Form.Control.Feedback type="invalid">
                   {emailError}
@@ -97,7 +103,7 @@ export const Login = ({setLoggedIn}) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={7}
+                  minLength={5}
                   isInvalid={!!passwordError}
                   className="password-input"
                 />
@@ -116,7 +122,7 @@ export const Login = ({setLoggedIn}) => {
               <Button variant="primary" type="submit">
                 Login
               </Button>
-              <a Style="float:right;text-decoration:none;" href='forgotPassword'>Forgot Password</a>
+              <Link Style="float:right;text-decoration:none;" to={'/forgotPassword'}>Forgot Password</Link>
             </Form>
           </div>
         </div>

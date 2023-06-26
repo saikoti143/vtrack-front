@@ -35,7 +35,7 @@ export const Home = () => {
 
     return () => clearInterval(interval);
   }, []); // Empty dependency array to run the effect only once
-  
+
 
   return (
     <div>
@@ -67,7 +67,7 @@ export const Home = () => {
             </table>
           </div>
         )}
-        <button className='btn btn-danger'><Link  style={{color:'black'}} to={"/logout"}>Logout</Link></button>
+        <button className='btn btn-danger'><Link style={{ color: 'black' }} to={"/logout"}>Logout</Link></button>
       </div>
     </div>
   );
